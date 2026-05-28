@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"monitoring-service/app/controllers"
+	"os"
 
 	"time"
 
@@ -79,10 +80,15 @@ func (m *Main) startCronJob() {
 }
 
 func (m *Main) Init() (err error) {
+	viper.AutomaticEnv()
 	viper.SetConfigFile(".env")
-	err = viper.ReadInConfig()
-	if err != nil {
-		return
+	if _, statErr := os.Stat(".env"); statErr == nil {
+		err = viper.ReadInConfig()
+		if err != nil {
+			return
+		}
+	} else {
+		log.Println("[config] .env tidak ditemukan, memakai environment variable")
 	}
 	m.cfg = config.NewConfig()
 
@@ -208,7 +214,7 @@ func (m *Main) Init() (err error) {
 func (m *Main) Run() (err error) {
 	defer m.close()
 
-	m.router.Start(":" + m.cfg.ServicePort)
+	err = m.router.Start(":" + m.cfg.ServicePort)
 	return
 }
 

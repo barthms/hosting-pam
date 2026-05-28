@@ -38,7 +38,15 @@ func NewConfig() *Config {
 		ServiceHost:        viper.GetString("APP_HOST"),
 		ServiceEndpointV:   viper.GetString("APP_ENDPOINT_V"),
 		ServiceEnvironment: viper.GetString("APP_ENVIRONMENT"),
-		ServicePort:        viper.GetString("APP_PORT"),
+		ServicePort: func() string {
+			if port := viper.GetString("APP_PORT"); port != "" {
+				return port
+			}
+			if port := viper.GetString("PORT"); port != "" {
+				return port
+			}
+			return "8080"
+		}(),
 		JWTSecret:          jwtSecret,
 		JWTAccessTokenMins: jwtAccessTokenMins,
 		Database:           LoadDatabaseConfig(),

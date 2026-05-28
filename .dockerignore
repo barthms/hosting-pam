@@ -1,0 +1,10 @@
+.git
+.github
+.vscode
+scratch
+sql
+*.log
+*.exe
+**/tmp
+cmd/.env
+cmd/.env-prod
